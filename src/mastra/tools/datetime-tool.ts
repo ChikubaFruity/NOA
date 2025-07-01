@@ -47,16 +47,12 @@ export const dateTimeTool = createTool({
 
         timezoneDisplay = timezoneNames[timezone] || timezone;
 
+        const tzDate = timezone === 'UTC' ? now : new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+
         // フォーマットに応じて日時を整形
         switch (format) {
             case 'iso':
-                if (timezone === 'UTC') {
-                    formattedDateTime = now.toISOString().replace('T', ' ').substring(0, 19);
-                } else {
-                    // 指定タイムゾーンでのISO風フォーマット
-                    const tzDate = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
-                    formattedDateTime = tzDate.toISOString().replace('T', ' ').substring(0, 19);
-                }
+                formattedDateTime = tzDate.toISOString().replace('T', ' ').substring(0, 19);
                 break;
 
             case 'locale':
@@ -78,8 +74,6 @@ export const dateTimeTool = createTool({
                 break;
         }
 
-        // 日本時間での詳細情報を取得
-        const jstDate = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
         const weekdays = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
 
         const result = {
@@ -87,15 +81,15 @@ export const dateTimeTool = createTool({
             timezone: timezoneDisplay,
             timestamp: now.getTime(),
             iso: now.toISOString(),
-            year: jstDate.getFullYear(),
-            month: jstDate.getMonth() + 1,
-            day: jstDate.getDate(),
-            hour: jstDate.getHours(),
-            minute: jstDate.getMinutes(),
-            second: jstDate.getSeconds(),
-            dayOfWeek: jstDate.getDay(),
-            dayOfWeekName: weekdays[jstDate.getDay()],
-            formattedJapanese: `${jstDate.getFullYear()}年${jstDate.getMonth() + 1}月${jstDate.getDate()}日 ${weekdays[jstDate.getDay()]} ${String(jstDate.getHours()).padStart(2, '0')}:${String(jstDate.getMinutes()).padStart(2, '0')}:${String(jstDate.getSeconds()).padStart(2, '0')}`
+            year: tzDate.getFullYear(),
+            month: tzDate.getMonth() + 1,
+            day: tzDate.getDate(),
+            hour: tzDate.getHours(),
+            minute: tzDate.getMinutes(),
+            second: tzDate.getSeconds(),
+            dayOfWeek: tzDate.getDay(),
+            dayOfWeekName: weekdays[tzDate.getDay()],
+            formattedJapanese: `${tzDate.getFullYear()}年${tzDate.getMonth() + 1}月${tzDate.getDate()}日 ${weekdays[tzDate.getDay()]} ${String(tzDate.getHours()).padStart(2, '0')}:${String(tzDate.getMinutes()).padStart(2, '0')}:${String(tzDate.getSeconds()).padStart(2, '0')}`
         };
 
         return {
